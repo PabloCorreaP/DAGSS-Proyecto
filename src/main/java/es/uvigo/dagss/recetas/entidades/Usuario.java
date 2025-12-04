@@ -31,7 +31,6 @@ public abstract class Usuario implements Serializable {
     @GeneratedValue(strategy = GenerationType.TABLE, generator = "USUARIO_GEN")
     private Long id;
 
-
     @Enumerated(EnumType.STRING)
     @Column(name = "TIPO_USUARIO", length = 20)
     protected TipoUsuario tipo;
