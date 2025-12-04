@@ -7,12 +7,32 @@ import jakarta.persistence.Entity;
 @DiscriminatorValue(value = "ADMINISTRADOR")
 public class Administrador extends Usuario {
 
-    // Anadir atributos propios
-	
+    private String nombre;
+    private String email;
+
     public Administrador() {
         super(TipoUsuario.ADMINISTRADOR); 
     }
 
+    public Administrador(String login, String password, String nombre, String email) {
+        super(TipoUsuario.ADMINISTRADOR, login, password);
+        this.nombre = nombre;
+        this.email = email;
+    }
 
+    public String getNombre() {
+        return nombre;
+    }
 
+    public void setNombre(String nombre) {
+        this.nombre = nombre;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
 }
