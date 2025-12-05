@@ -1,3 +1,9 @@
+JPA
+Recetas: no traer todas las recetas de una farmacia
+Medicamento: quitar one to many, Listo
+Prescrip: @temporal fechas
+Receta: @temporal   fechas, 
+
 Todos los usuarios pueden modificar su contarseña una vez hacen login
 Gestión de Centros de Salud, Gestión de Médicos, Gestión de Pacientes, Gestión de Farmacias, Gestión de Citas y Gestión de Medicamentos
 Consultar, crear y modificar
