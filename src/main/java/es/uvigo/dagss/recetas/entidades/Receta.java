@@ -16,7 +16,9 @@ public class Receta implements Serializable {
     @JoinColumn(name = "prescripcion_id", nullable = false)
     private Prescripcion prescripcion;
 
+    @Temporal(TemporalType.DATE)
     private LocalDate fechaValidezInicial;
+    @Temporal(TemporalType.DATE)
     private LocalDate fechaValidezFinal;
     private Integer numeroUnidades = 1;
 

@@ -31,7 +31,9 @@ public class Prescripcion implements Serializable {
     @Column(length = 1000)
     private String indicaciones;
 
+    @Temporal(TemporalType.DATE)
     private LocalDate fechaInicio;
+    @Temporal(TemporalType.DATE)
     private LocalDate fechaFin;
     private Boolean activa = true;
 

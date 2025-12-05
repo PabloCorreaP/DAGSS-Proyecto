@@ -21,7 +21,9 @@ public class Cita implements Serializable {
     @JoinColumn(name = "medico_id", nullable = false)
     private Medico medico;
 
+    @Temporal(TemporalType.DATE)
     private LocalDate fecha;
+    @Temporal(TemporalType.TIME)
     private LocalTime horaInicio;
     private Integer duracion = 15;
 

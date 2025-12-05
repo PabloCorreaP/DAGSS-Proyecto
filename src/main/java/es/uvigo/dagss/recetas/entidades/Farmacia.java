@@ -24,9 +24,6 @@ public class Farmacia extends Usuario {
     private String telefono;
     private String email;
 
-    @OneToMany(mappedBy = "farmacia", cascade = CascadeType.ALL)
-    private List<Receta> recetasServidas = new ArrayList<>();
-
     public Farmacia() {
         super(TipoUsuario.FARMACIA);
     }
@@ -128,13 +125,5 @@ public class Farmacia extends Usuario {
 
     public void setEmail(String email) {
         this.email = email;
-    }
-
-    public List<Receta> getRecetasServidas() {
-        return recetasServidas;
-    }
-
-    public void setRecetasServidas(List<Receta> recetasServidas) {
-        this.recetasServidas = recetasServidas;
     }
 }

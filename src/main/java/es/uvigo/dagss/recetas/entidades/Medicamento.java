@@ -1,6 +1,7 @@
 package es.uvigo.dagss.recetas.entidades;
 
 import jakarta.persistence.*;
+
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
@@ -20,13 +21,10 @@ public class Medicamento implements Serializable {
     private Integer numeroDosis;
     private Boolean activo = true;
 
-    @OneToMany(mappedBy = "medicamento", cascade = CascadeType.ALL)
-    private List<Prescripcion> prescripciones = new ArrayList<>();
-
     public Medicamento() {
     }
 
-    public Medicamento(String nombreComercial, String principioActivo, String fabricante, 
+    public Medicamento(String nombreComercial, String principioActivo, String fabricante,
                        String familia, Integer numeroDosis) {
         this.nombreComercial = nombreComercial;
         this.principioActivo = principioActivo;
@@ -98,14 +96,6 @@ public class Medicamento implements Serializable {
 
     public void desactivar() {
         this.activo = false;
-    }
-
-    public List<Prescripcion> getPrescripciones() {
-        return prescripciones;
-    }
-
-    public void setPrescripciones(List<Prescripcion> prescripciones) {
-        this.prescripciones = prescripciones;
     }
 }
 
