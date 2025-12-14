@@ -74,8 +74,14 @@
 			<scope>test</scope>
 		</dependency>
 
-		<!-- Anadido para documentacion OpenAPI autogenerada -->
-		<!-- OPCIONAL: Anadido para documentacion OpenAPI autogenerada
+
+		<dependency>
+			<groupId>org.mariadb.jdbc</groupId>
+			<artifactId>mariadb-java-client</artifactId>
+		</dependency>
+
+		<!-- grafica -->
+
 		<dependency>
 			<groupId>org.springdoc</groupId>
 			<artifactId>springdoc-openapi-starter-webmvc-api</artifactId>
@@ -87,7 +93,7 @@
 			<artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
 			<version>2.6.0</version>
 		</dependency>
-		     OPCIONAL -->	
+		   <!-- grafica -->
 
 	</dependencies>
 
