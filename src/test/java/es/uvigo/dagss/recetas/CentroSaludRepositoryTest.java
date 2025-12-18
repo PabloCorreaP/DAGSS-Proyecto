@@ -6,14 +6,14 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.test.context.ActiveProfiles;
 
 import es.uvigo.dagss.recetas.entidades.CentroSalud;
-import es.uvigo.dagss.recetas.repositorios.CentroSaludRepository;
+import es.uvigo.dagss.recetas.repositorios.CentroSaludDAO;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @DataJpaTest
 @ActiveProfiles("test")
 class CentroSaludRepositoryTest {
 
-  @Autowired CentroSaludRepository repo;
+  @Autowired CentroSaludDAO repo;
 
   @Test void like_por_nombre_o_localidad() {
     repo.save(new CentroSalud("CS Vigo","Calle 1","Vigo","36201","Pontevedra","1","a@a.com"));

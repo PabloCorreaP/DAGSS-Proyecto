@@ -4,9 +4,9 @@ import es.uvigo.dagss.recetas.entidades.Cita;
 import es.uvigo.dagss.recetas.entidades.EstadoCita;
 import es.uvigo.dagss.recetas.entidades.Medico;
 import es.uvigo.dagss.recetas.entidades.Paciente;
-import es.uvigo.dagss.recetas.repositorios.CitaRepository;
-import es.uvigo.dagss.recetas.repositorios.MedicoRepository;
-import es.uvigo.dagss.recetas.repositorios.PacienteRepository;
+import es.uvigo.dagss.recetas.repositorios.CitaDAO;
+import es.uvigo.dagss.recetas.repositorios.MedicoDAO;
+import es.uvigo.dagss.recetas.repositorios.PacienteDAO;
 import es.uvigo.dagss.recetas.servicios.excepciones.OperacionNoPermitidaException;
 import es.uvigo.dagss.recetas.servicios.excepciones.RecursoNoEncontradoException;
 import es.uvigo.dagss.recetas.servicios.excepciones.ValidacionException;
@@ -21,43 +21,43 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 public class CitaService {
 
-    private final CitaRepository citaRepository;
-    private final MedicoRepository medicoRepository;
-    private final PacienteRepository pacienteRepository;
+    private final CitaDAO citaDAO;
+    private final MedicoDAO medicoDAO;
+    private final PacienteDAO pacienteDAO;
 
-    public CitaService(CitaRepository citaRepository,
-                       MedicoRepository medicoRepository,
-                       PacienteRepository pacienteRepository) {
-        this.citaRepository = citaRepository;
-        this.medicoRepository = medicoRepository;
-        this.pacienteRepository = pacienteRepository;
+    public CitaService(CitaDAO citaDAO,
+                       MedicoDAO medicoDAO,
+                       PacienteDAO pacienteDAO) {
+        this.citaDAO = citaDAO;
+        this.medicoDAO = medicoDAO;
+        this.pacienteDAO = pacienteDAO;
     }
 
     /** HU-A7: listado por día + filtros opcionales */
     @Transactional(readOnly = true)
     public List<Cita> listarPorDia(LocalDate fecha, Long medicoId, Long pacienteId) {
-        return citaRepository.buscarPorFechaConFiltros(fecha, medicoId, pacienteId);
+        return citaDAO.buscarPorFechaConFiltros(fecha, medicoId, pacienteId);
     }
 
     /** HU-A7: anular cita (admin) */
     @Transactional
     public void anularComoAdmin(Long citaId) {
-        Cita c = citaRepository.findById(citaId)
+        Cita c = citaDAO.findById(citaId)
                 .orElseThrow(() -> new RecursoNoEncontradoException("Cita no encontrada: " + citaId));
         c.setEstado(EstadoCita.ANULADA);
-        citaRepository.save(c);
+        citaDAO.save(c);
     }
 
     /** HU-M2: agenda de hoy */
     @Transactional(readOnly = true)
     public List<Cita> agendaMedico(Long medicoId, LocalDate fecha) {
-        return citaRepository.findByMedicoIdAndFechaOrderByHoraInicio(medicoId, fecha);
+        return citaDAO.findByMedicoIdAndFechaOrderByHoraInicio(medicoId, fecha);
     }
 
-    /** HU-M2: marcar ausente (solo si PLANIFICADA) */
+    /** HU-M2: marcar ausente, tiene que ser PLANIFICADA) */
     @Transactional
     public void marcarAusente(Long citaId, Long medicoId) {
-        Cita c = citaRepository.findById(citaId)
+        Cita c = citaDAO.findById(citaId)
                 .orElseThrow(() -> new RecursoNoEncontradoException("Cita no encontrada: " + citaId));
 
         if (!c.getMedico().getId().equals(medicoId)) {
@@ -68,32 +68,32 @@ public class CitaService {
         }
 
         c.setEstado(EstadoCita.AUSENTE);
-        citaRepository.save(c);
+        citaDAO.save(c);
     }
 
     /** HU-M3: marcar completada */
     @Transactional
     public void marcarCompletada(Long citaId, Long medicoId) {
-        Cita c = citaRepository.findById(citaId)
+        Cita c = citaDAO.findById(citaId)
                 .orElseThrow(() -> new RecursoNoEncontradoException("Cita no encontrada: " + citaId));
 
         if (!c.getMedico().getId().equals(medicoId)) {
             throw new OperacionNoPermitidaException("La cita no pertenece al médico");
         }
         c.setEstado(EstadoCita.COMPLETADA);
-        citaRepository.save(c);
+        citaDAO.save(c);
     }
 
-    /** HU-P2: citas futuras planificadas del paciente (a partir de ahora) */
+    /** HU-P2: citas futuras planificadas del paciente  */
     @Transactional(readOnly = true)
     public List<Cita> citasFuturasPlanificadas(Long pacienteId, LocalDate hoy, LocalTime ahora) {
-        return citaRepository.findFuturasPlanificadasDePaciente(pacienteId, hoy, ahora);
+        return citaDAO.findFuturasPlanificadasDePaciente(pacienteId, hoy, ahora);
     }
 
     /** HU-P2: anular cita (paciente) */
     @Transactional
     public void anularComoPaciente(Long citaId, Long pacienteId) {
-        Cita c = citaRepository.findById(citaId)
+        Cita c = citaDAO.findById(citaId)
                 .orElseThrow(() -> new RecursoNoEncontradoException("Cita no encontrada: " + citaId));
 
         if (!c.getPaciente().getId().equals(pacienteId)) {
@@ -104,16 +104,16 @@ public class CitaService {
         }
 
         c.setEstado(EstadoCita.ANULADA);
-        citaRepository.save(c);
+        citaDAO.save(c);
     }
 
-    /** HU-P3: huecos disponibles (15 min) para el médico en un día: 8:30-15:30 */
+    /** HU-P3: huecos disponibles, 15 min, para el médico en un dia concreto */
     @Transactional(readOnly = true)
     public List<LocalTime> huecosDisponibles(Long medicoId, LocalDate fecha) {
         LocalTime inicio = LocalTime.of(8, 30);
         LocalTime fin = LocalTime.of(15, 30);
 
-        List<Cita> existentes = citaRepository.findByMedicoIdAndFechaAndEstadoOrderByHoraInicio(
+        List<Cita> existentes = citaDAO.findByMedicoIdAndFechaAndEstadoOrderByHoraInicio(
                 medicoId, fecha, EstadoCita.PLANIFICADA);
 
         Set<LocalTime> ocupadas = new HashSet<>();
@@ -132,12 +132,12 @@ public class CitaService {
         return libres;
     }
 
-    /** HU-P3: crear cita del paciente con su médico asignado (verifica hueco libre) */
+    /** HU-P3: crear cita del paciente con su médico asignado  */
     @Transactional
     public Cita crearCitaPaciente(Long pacienteId, LocalDate fecha, LocalTime horaInicio) {
         if (fecha == null || horaInicio == null) throw new ValidacionException("Fecha y hora son obligatorias");
 
-        Paciente p = pacienteRepository.findById(pacienteId)
+        Paciente p = pacienteDAO.findById(pacienteId)
                 .orElseThrow(() -> new RecursoNoEncontradoException("Paciente no encontrado: " + pacienteId));
 
         Medico m = p.getMedicoAsignado();
@@ -150,8 +150,8 @@ public class CitaService {
             throw new ValidacionException("Hora fuera de rango (8:30-15:30) o no alineada a 15 min");
         }
 
-        // comprobar que el hueco está libre (solo conflictos con PLANIFICADA)
-        boolean ocupado = citaRepository
+        // comprobar que el hueco está libre
+        boolean ocupado = citaDAO
                 .findByMedicoIdAndFechaAndHoraInicioAndEstado(m.getId(), fecha, horaInicio, EstadoCita.PLANIFICADA)
                 .isPresent();
 
@@ -167,6 +167,6 @@ public class CitaService {
         c.setDuracion(15);
         c.setEstado(EstadoCita.PLANIFICADA);
 
-        return citaRepository.save(c);
+        return citaDAO.save(c);
     }
 }

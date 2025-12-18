@@ -1,7 +1,7 @@
 package es.uvigo.dagss.recetas.servicios;
 
 import es.uvigo.dagss.recetas.entidades.Medicamento;
-import es.uvigo.dagss.recetas.repositorios.MedicamentoRepository;
+import es.uvigo.dagss.recetas.repositorios.MedicamentoDAO;
 import es.uvigo.dagss.recetas.servicios.excepciones.RecursoNoEncontradoException;
 import java.util.List;
 import org.springframework.stereotype.Service;
@@ -10,36 +10,36 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 public class MedicamentoService {
 
-    private final MedicamentoRepository medicamentoRepository;
+    private final MedicamentoDAO medicamentoDAO;
 
-    public MedicamentoService(MedicamentoRepository medicamentoRepository) {
-        this.medicamentoRepository = medicamentoRepository;
+    public MedicamentoService(MedicamentoDAO medicamentoDAO) {
+        this.medicamentoDAO = medicamentoDAO;
     }
 
     /** HU-A8: listado */
     @Transactional(readOnly = true)
     public List<Medicamento> listarActivos() {
-        return medicamentoRepository.findByActivoTrueOrderByNombreComercialAsc();
+        return medicamentoDAO.findByActivoTrueOrderByNombreComercialAsc();
     }
 
-    /** HU-A8 / HU-M4: buscador (LIKE en nombre/principio/fabricante/familia) */
+    /** HU-A8  y HU-M4: buscador LIKE en nombre/principio/fabricante/familia */
     @Transactional(readOnly = true)
     public List<Medicamento> buscarActivos(String texto) {
         String t = (texto == null || texto.isBlank()) ? null : texto.trim();
-        return medicamentoRepository.buscarActivosLike(t);
+        return medicamentoDAO.buscarActivosLike(t);
     }
 
     /** HU-A8: alta */
     @Transactional
     public Medicamento crear(Medicamento m) {
         m.setActivo(true);
-        return medicamentoRepository.save(m);
+        return medicamentoDAO.save(m);
     }
 
     /** HU-A8: edición */
     @Transactional
     public Medicamento actualizar(Long id, Medicamento datos) {
-        Medicamento m = medicamentoRepository.findById(id)
+        Medicamento m = medicamentoDAO.findById(id)
                 .orElseThrow(() -> new RecursoNoEncontradoException("Medicamento no encontrado: " + id));
 
         m.setNombreComercial(datos.getNombreComercial());
@@ -49,21 +49,21 @@ public class MedicamentoService {
         m.setNumeroDosis(datos.getNumeroDosis());
         if (datos.getActivo() != null) m.setActivo(datos.getActivo());
 
-        return medicamentoRepository.save(m);
+        return medicamentoDAO.save(m);
     }
 
-    /** HU-A8: baja lógica */
+    /** HU-A8: baja  */
     @Transactional
     public void bajaLogica(Long id) {
-        Medicamento m = medicamentoRepository.findById(id)
+        Medicamento m = medicamentoDAO.findById(id)
                 .orElseThrow(() -> new RecursoNoEncontradoException("Medicamento no encontrado: " + id));
         m.setActivo(false);
-        medicamentoRepository.save(m);
+        medicamentoDAO.save(m);
     }
 
     @Transactional(readOnly = true)
     public Medicamento getOrThrow(Long id) {
-        return medicamentoRepository.findById(id)
+        return medicamentoDAO.findById(id)
                 .orElseThrow(() -> new RecursoNoEncontradoException("Medicamento no encontrado: " + id));
     }
 }

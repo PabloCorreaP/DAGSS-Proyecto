@@ -2,9 +2,9 @@ package es.uvigo.dagss.recetas.servicios;
 
 import es.uvigo.dagss.recetas.entidades.CentroSalud;
 import es.uvigo.dagss.recetas.entidades.Medico;
-import es.uvigo.dagss.recetas.repositorios.CentroSaludRepository;
-import es.uvigo.dagss.recetas.repositorios.MedicoRepository;
-import es.uvigo.dagss.recetas.repositorios.UsuarioRepository;
+import es.uvigo.dagss.recetas.repositorios.CentroSaludDAO;
+import es.uvigo.dagss.recetas.repositorios.MedicoDAO;
+import es.uvigo.dagss.recetas.repositorios.UsuarioDAO;
 import es.uvigo.dagss.recetas.servicios.excepciones.OperacionNoPermitidaException;
 import es.uvigo.dagss.recetas.servicios.excepciones.RecursoNoEncontradoException;
 import es.uvigo.dagss.recetas.servicios.excepciones.ValidacionException;
@@ -15,13 +15,13 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 public class MedicoService {
 
-    private final MedicoRepository medicoRepository;
-    private final CentroSaludRepository centroSaludRepository;
-    private final UsuarioRepository usuarioRepository;
+    private final MedicoDAO medicoRepository;
+    private final CentroSaludDAO centroSaludRepository;
+    private final UsuarioDAO usuarioRepository;
 
-    public MedicoService(MedicoRepository medicoRepository,
-                         CentroSaludRepository centroSaludRepository,
-                         UsuarioRepository usuarioRepository) {
+    public MedicoService(MedicoDAO medicoRepository,
+                         CentroSaludDAO centroSaludRepository,
+                         UsuarioDAO usuarioRepository) {
         this.medicoRepository = medicoRepository;
         this.centroSaludRepository = centroSaludRepository;
         this.usuarioRepository = usuarioRepository;

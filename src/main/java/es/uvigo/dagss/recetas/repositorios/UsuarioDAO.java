@@ -6,12 +6,8 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
-/**
- * Repositorio base para login y operaciones comunes sobre usuarios.
- * Con {@code InheritanceType.TABLE_PER_CLASS} Hibernate resuelve las consultas sobre Usuario
- * mediante UNION sobre las tablas de sus subclases.
- */
-public interface UsuarioRepository extends JpaRepository<Usuario, Long> {
+
+public interface UsuarioDAO extends JpaRepository<Usuario, Long> {
 
     Optional<Usuario> findByLogin(String login);
 

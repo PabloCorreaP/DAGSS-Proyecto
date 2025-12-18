@@ -7,7 +7,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
-public interface FarmaciaRepository extends JpaRepository<Farmacia, Long> {
+public interface FarmaciaDAO extends JpaRepository<Farmacia, Long> {
 
     Optional<Farmacia> findByLogin(String login);
 

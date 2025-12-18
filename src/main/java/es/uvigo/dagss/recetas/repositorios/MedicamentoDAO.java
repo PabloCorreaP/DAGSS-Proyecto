@@ -6,7 +6,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
-public interface MedicamentoRepository extends JpaRepository<Medicamento, Long> {
+public interface MedicamentoDAO extends JpaRepository<Medicamento, Long> {
 
     List<Medicamento> findByActivoTrueOrderByNombreComercialAsc();
 

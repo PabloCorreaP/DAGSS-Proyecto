@@ -1,7 +1,7 @@
 package es.uvigo.dagss.recetas.servicios;
 
 import es.uvigo.dagss.recetas.entidades.CentroSalud;
-import es.uvigo.dagss.recetas.repositorios.CentroSaludRepository;
+import es.uvigo.dagss.recetas.repositorios.CentroSaludDAO;
 import es.uvigo.dagss.recetas.servicios.excepciones.RecursoNoEncontradoException;
 import java.util.List;
 import org.springframework.stereotype.Service;
@@ -10,10 +10,10 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 public class CentroSaludService {
 
-    private final CentroSaludRepository centroSaludRepository;
+    private final CentroSaludDAO centroSaludRepository;
 
-    public CentroSaludService(CentroSaludRepository centroSaludRepository) {
-        this.centroSaludRepository = centroSaludRepository;
+    public CentroSaludService(CentroSaludDAO centroSaludDAO) {
+        this.centroSaludRepository = centroSaludDAO;
     }
 
     /** HU-A3: listado */
@@ -22,14 +22,14 @@ public class CentroSaludService {
         return centroSaludRepository.findByActivoTrueOrderByNombreAsc();
     }
 
-    /** HU-A3: búsqueda (nombre o localidad, LIKE) */
+    /** HU-A3: búsqueda nombre o localidad, LIKE */
     @Transactional(readOnly = true)
     public List<CentroSalud> buscarActivos(String texto) {
         String t = (texto == null || texto.isBlank()) ? null : texto.trim();
         return centroSaludRepository.buscarActivosPorNombreOLocalidadLike(t);
     }
 
-    /** Para HU-A5: centros activos de una provincia (para desplegable) */
+    /** Para HU-A5: centros activos de una provincia */
     @Transactional(readOnly = true)
     public List<CentroSalud> centrosActivosDeProvincia(String provincia) {
         return centroSaludRepository.findByActivoTrueAndProvinciaIgnoreCaseOrderByLocalidadAscNombreAsc(provincia);
@@ -60,7 +60,7 @@ public class CentroSaludService {
         return centroSaludRepository.save(c);
     }
 
-    /** HU-A3: baja lógica */
+    /** HU-A3: baja  */
     @Transactional
     public void bajaLogica(Long id) {
         CentroSalud c = centroSaludRepository.findById(id)

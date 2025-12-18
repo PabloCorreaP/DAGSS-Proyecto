@@ -3,10 +3,10 @@ package es.uvigo.dagss.recetas.servicios;
 import es.uvigo.dagss.recetas.entidades.CentroSalud;
 import es.uvigo.dagss.recetas.entidades.Medico;
 import es.uvigo.dagss.recetas.entidades.Paciente;
-import es.uvigo.dagss.recetas.repositorios.CentroSaludRepository;
-import es.uvigo.dagss.recetas.repositorios.MedicoRepository;
-import es.uvigo.dagss.recetas.repositorios.PacienteRepository;
-import es.uvigo.dagss.recetas.repositorios.UsuarioRepository;
+import es.uvigo.dagss.recetas.repositorios.CentroSaludDAO;
+import es.uvigo.dagss.recetas.repositorios.MedicoDAO;
+import es.uvigo.dagss.recetas.repositorios.PacienteDAO;
+import es.uvigo.dagss.recetas.repositorios.UsuarioDAO;
 import es.uvigo.dagss.recetas.servicios.excepciones.OperacionNoPermitidaException;
 import es.uvigo.dagss.recetas.servicios.excepciones.RecursoNoEncontradoException;
 import es.uvigo.dagss.recetas.servicios.excepciones.ValidacionException;
@@ -17,15 +17,15 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 public class PacienteService {
 
-    private final PacienteRepository pacienteRepository;
-    private final CentroSaludRepository centroSaludRepository;
-    private final MedicoRepository medicoRepository;
-    private final UsuarioRepository usuarioRepository;
+    private final PacienteDAO pacienteRepository;
+    private final CentroSaludDAO centroSaludRepository;
+    private final MedicoDAO medicoRepository;
+    private final UsuarioDAO usuarioRepository;
 
-    public PacienteService(PacienteRepository pacienteRepository,
-                           CentroSaludRepository centroSaludRepository,
-                           MedicoRepository medicoRepository,
-                           UsuarioRepository usuarioRepository) {
+    public PacienteService(PacienteDAO pacienteRepository,
+                           CentroSaludDAO centroSaludRepository,
+                           MedicoDAO medicoRepository,
+                           UsuarioDAO usuarioRepository) {
         this.pacienteRepository = pacienteRepository;
         this.centroSaludRepository = centroSaludRepository;
         this.medicoRepository = medicoRepository;

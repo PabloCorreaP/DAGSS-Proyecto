@@ -10,7 +10,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
-public interface CitaRepository extends JpaRepository<Cita, Long> {
+public interface CitaDAO extends JpaRepository<Cita, Long> {
 
     @Query("""
            select c

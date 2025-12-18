@@ -7,7 +7,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
-public interface PrescripcionRepository extends JpaRepository<Prescripcion, Long> {
+public interface PrescripcionDAO extends JpaRepository<Prescripcion, Long> {
 
     @Query("""
            select p
