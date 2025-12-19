@@ -54,16 +54,12 @@ public class MedicamentoService {
 
     /** HU-A8: baja  */
     @Transactional
-    public void bajaLogica(Long id) {
+    public void baja(Long id) {
         Medicamento m = medicamentoDAO.findById(id)
                 .orElseThrow(() -> new RecursoNoEncontradoException("Medicamento no encontrado: " + id));
         m.setActivo(false);
         medicamentoDAO.save(m);
     }
 
-    @Transactional(readOnly = true)
-    public Medicamento getOrThrow(Long id) {
-        return medicamentoDAO.findById(id)
-                .orElseThrow(() -> new RecursoNoEncontradoException("Medicamento no encontrado: " + id));
-    }
+ 
 }

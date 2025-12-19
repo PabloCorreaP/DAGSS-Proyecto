@@ -61,7 +61,7 @@ public class AdministradorService {
 
     /** HU-A2: baja  */
     @Transactional
-    public void bajaLogica(Long id) {
+    public void baja(Long id) {
         Administrador a = administradorDAO.findById(id)
                 .orElseThrow(() -> new RecursoNoEncontradoException("Administrador no encontrado: " + id));
         a.setActivo(false);

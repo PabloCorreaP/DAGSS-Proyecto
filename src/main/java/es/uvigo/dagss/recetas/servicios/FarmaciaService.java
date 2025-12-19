@@ -112,7 +112,7 @@ public class FarmaciaService {
 
     /** HU-A6: baja  */
     @Transactional
-    public void bajaLogica(Long id) {
+    public void baja(Long id) {
         Farmacia f = farmaciaDAO.findById(id)
                 .orElseThrow(() -> new RecursoNoEncontradoException("Farmacia no encontrada: " + id));
         f.setActivo(false);
@@ -148,9 +148,5 @@ public class FarmaciaService {
         return farmaciaDAO.save(f);
     }
 
-    @Transactional(readOnly = true)
-    public Farmacia getOrThrow(Long id) {
-        return farmaciaDAO.findById(id)
-                .orElseThrow(() -> new RecursoNoEncontradoException("Farmacia no encontrada: " + id));
-    }
+ 
 }

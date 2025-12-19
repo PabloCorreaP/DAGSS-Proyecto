@@ -62,7 +62,7 @@ public class CentroSaludService {
 
     /** HU-A3: baja  */
     @Transactional
-    public void bajaLogica(Long id) {
+    public void baja(Long id) {
         CentroSalud c = centroSaludRepository.findById(id)
                 .orElseThrow(() -> new RecursoNoEncontradoException("Centro de salud no encontrado: " + id));
         c.setActivo(false);

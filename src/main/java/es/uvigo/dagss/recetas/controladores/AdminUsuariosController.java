@@ -62,7 +62,7 @@ public class AdminUsuariosController {
 
     @DeleteMapping("/administradores/{id}")
     public ResponseEntity<Void> bajaAdministrador(@PathVariable Long id) {
-        administradorService.bajaLogica(id);
+        administradorService.baja(id);
         return ResponseEntity.noContent().build();
     }
 
@@ -121,7 +121,7 @@ public class AdminUsuariosController {
 
     @DeleteMapping("/medicos/{id}")
     public ResponseEntity<Void> bajaMedico(@PathVariable Long id) {
-        medicoService.bajaLogica(id);
+        medicoService.baja(id);
         return ResponseEntity.noContent().build();
     }
 
@@ -199,7 +199,7 @@ public class AdminUsuariosController {
 
     @DeleteMapping("/pacientes/{id}")
     public ResponseEntity<Void> bajaPaciente(@PathVariable Long id) {
-        pacienteService.bajaLogica(id);
+        pacienteService.baja(id);
         return ResponseEntity.noContent().build();
     }
 
@@ -252,7 +252,7 @@ public class AdminUsuariosController {
 
     @DeleteMapping("/farmacias/{id}")
     public ResponseEntity<Void> bajaFarmacia(@PathVariable Long id) {
-        farmaciaService.bajaLogica(id);
+        farmaciaService.baja(id);
         return ResponseEntity.noContent().build();
     }
 }

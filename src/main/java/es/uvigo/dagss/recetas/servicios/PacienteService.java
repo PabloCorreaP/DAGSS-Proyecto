@@ -17,25 +17,25 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 public class PacienteService {
 
-    private final PacienteDAO pacienteRepository;
-    private final CentroSaludDAO centroSaludRepository;
-    private final MedicoDAO medicoRepository;
-    private final UsuarioDAO usuarioRepository;
+    private final PacienteDAO pacienteDAO;
+    private final CentroSaludDAO centroDAO;
+    private final MedicoDAO medicoDAO;
+    private final UsuarioDAO usuarioDAO;
 
     public PacienteService(PacienteDAO pacienteRepository,
                            CentroSaludDAO centroSaludRepository,
                            MedicoDAO medicoRepository,
                            UsuarioDAO usuarioRepository) {
-        this.pacienteRepository = pacienteRepository;
-        this.centroSaludRepository = centroSaludRepository;
-        this.medicoRepository = medicoRepository;
-        this.usuarioRepository = usuarioRepository;
+        this.pacienteDAO = pacienteRepository;
+        this.centroDAO = centroSaludRepository;
+        this.medicoDAO = medicoRepository;
+        this.usuarioDAO = usuarioRepository;
     }
 
     /** HU-A5: listado */
     @Transactional(readOnly = true)
     public List<Paciente> listarActivos() {
-        return pacienteRepository.findByActivoTrueOrderByApellidosAscNombreAsc();
+        return pacienteDAO.findByActivoTrueOrderByApellidosAscNombreAsc();
     }
 
     /** HU-A5: búsqueda por nombre/localidad/centro/médico */
@@ -43,10 +43,12 @@ public class PacienteService {
     public List<Paciente> buscarActivos(String nombre, String localidad, Long centroId, Long medicoId) {
         String n = (nombre == null || nombre.isBlank()) ? null : nombre.trim();
         String l = (localidad == null || localidad.isBlank()) ? null : localidad.trim();
-        return pacienteRepository.buscarActivos(n, l, centroId, medicoId);
+        return pacienteDAO.buscarActivos(n, l, centroId, medicoId);
     }
 
-    /** HU-A5: alta. Password inicial = DNI */
+    /** HU-A5: alta
+     * contra ini dni
+     */
     @Transactional
     public Paciente crear(String login,
                           String nombre,
@@ -66,12 +68,12 @@ public class PacienteService {
 
         if (login == null || login.isBlank()) throw new ValidacionException("login obligatorio");
         if (dni == null || dni.isBlank()) throw new ValidacionException("dni obligatorio");
-        if (usuarioRepository.existsByLogin(login.trim())) throw new ValidacionException("Ya existe un usuario con ese login");
+        if (usuarioDAO.existsByLogin(login.trim())) throw new ValidacionException("Ya existe un usuario con ese login");
 
-        CentroSalud cs = centroSaludRepository.findById(centroSaludId)
+        CentroSalud cs = centroDAO.findById(centroSaludId)
                 .orElseThrow(() -> new RecursoNoEncontradoException("Centro de salud no encontrado: " + centroSaludId));
 
-        Medico m = medicoRepository.findById(medicoId)
+        Medico m = medicoDAO.findById(medicoId)
                 .orElseThrow(() -> new RecursoNoEncontradoException("Médico no encontrado: " + medicoId));
 
         if (m.getCentroSalud() == null || cs.getId() == null || !cs.getId().equals(m.getCentroSalud().getId())) {
@@ -80,7 +82,7 @@ public class PacienteService {
 
         Paciente p = new Paciente();
         p.setLogin(login.trim());
-        p.setPassword(dni); // password inicial
+        p.setPassword(dni); 
         p.setNombre(nombre);
         p.setApellidos(apellidos);
         p.setDni(dni);
@@ -97,10 +99,10 @@ public class PacienteService {
         p.setMedicoAsignado(m);
         p.setActivo(true);
 
-        return pacienteRepository.save(p);
+        return pacienteDAO.save(p);
     }
 
-    /** HU-A5: edición por administrador (permite cambiar centro y médico, con coherencia centro-médico) */
+    /** HU-A5: edición por administrador  */
     @Transactional
     public Paciente actualizarPorAdmin(Long id,
                                       String nombre,
@@ -119,18 +121,18 @@ public class PacienteService {
                                       Long medicoId,
                                       Boolean activo) {
 
-        Paciente p = pacienteRepository.findById(id)
+        Paciente p = pacienteDAO.findById(id)
                 .orElseThrow(() -> new RecursoNoEncontradoException("Paciente no encontrado: " + id));
 
         CentroSalud cs = p.getCentroSalud();
         if (centroSaludId != null) {
-            cs = centroSaludRepository.findById(centroSaludId)
+            cs = centroDAO.findById(centroSaludId)
                     .orElseThrow(() -> new RecursoNoEncontradoException("Centro de salud no encontrado: " + centroSaludId));
             p.setCentroSalud(cs);
         }
 
         if (medicoId != null) {
-            Medico m = medicoRepository.findById(medicoId)
+            Medico m = medicoDAO.findById(medicoId)
                     .orElseThrow(() -> new RecursoNoEncontradoException("Médico no encontrado: " + medicoId));
 
             if (m.getCentroSalud() == null || cs == null || cs.getId() == null ||
@@ -154,19 +156,19 @@ public class PacienteService {
         p.setFechaNacimiento(fechaNacimiento);
         if (activo != null) p.setActivo(activo);
 
-        return pacienteRepository.save(p);
+        return pacienteDAO.save(p);
     }
 
-    /** HU-A5: baja lógica */
+    /** HU-A5: baja  */
     @Transactional
-    public void bajaLogica(Long id) {
-        Paciente p = pacienteRepository.findById(id)
+    public void baja(Long id) {
+        Paciente p = pacienteDAO.findById(id)
                 .orElseThrow(() -> new RecursoNoEncontradoException("Paciente no encontrado: " + id));
         p.setActivo(false);
-        pacienteRepository.save(p);
+        pacienteDAO.save(p);
     }
 
-    /** HU-P5: perfil (no permite cambiar centro/medico) */
+    /** HU-P5: perfil  */
     @Transactional
     public Paciente actualizarPerfil(Long pacienteId,
                                     String nuevaPassword,
@@ -179,7 +181,7 @@ public class PacienteService {
                                     String telefono,
                                     String email) {
 
-        Paciente p = pacienteRepository.findById(pacienteId)
+        Paciente p = pacienteDAO.findById(pacienteId)
                 .orElseThrow(() -> new RecursoNoEncontradoException("Paciente no encontrado: " + pacienteId));
 
         if (nuevaPassword != null && !nuevaPassword.isBlank()) {
@@ -195,12 +197,12 @@ public class PacienteService {
         if (telefono != null) p.setTelefono(telefono);
         if (email != null) p.setEmail(email);
 
-        return pacienteRepository.save(p);
+        return pacienteDAO.save(p);
     }
 
     @Transactional(readOnly = true)
     public Paciente getOrThrow(Long id) {
-        return pacienteRepository.findById(id)
+        return pacienteDAO.findById(id)
                 .orElseThrow(() -> new RecursoNoEncontradoException("Paciente no encontrado: " + id));
     }
 }

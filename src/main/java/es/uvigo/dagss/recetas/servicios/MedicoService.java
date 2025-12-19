@@ -114,7 +114,7 @@ public class MedicoService {
 
     /** HU-A4: baja lógica */
     @Transactional
-    public void bajaLogica(Long id) {
+    public void baja(Long id) {
         Medico m = medicoRepository.findById(id)
                 .orElseThrow(() -> new RecursoNoEncontradoException("Médico no encontrado: " + id));
         m.setActivo(false);
@@ -137,23 +137,13 @@ public class MedicoService {
             m.setPassword(nuevaPassword);
         }
 
-        // datos personales
         if (nombre != null) m.setNombre(nombre);
         if (apellidos != null) m.setApellidos(apellidos);
         if (telefono != null) m.setTelefono(telefono);
         if (email != null) m.setEmail(email);
 
-        // Prohibido tocar centro desde perfil
-        // (si alguien intentase por el controlador, mejor fallar aquí)
-        // No hay parámetro de centro, así que estamos bien.
-
         return medicoRepository.save(m);
     }
 
-    /** Utilidad: obtener médico o lanzar excepción */
-    @Transactional(readOnly = true)
-    public Medico getOrThrow(Long id) {
-        return medicoRepository.findById(id)
-                .orElseThrow(() -> new RecursoNoEncontradoException("Médico no encontrado: " + id));
-    }
+  
 }

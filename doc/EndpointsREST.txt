@@ -1,0 +1,67 @@
+
+Login
+    POST /api/auth/login 
+    POST /api/auth/logout
+    GET /api/auth/me 
+Administrador
+    GET /api/admin/administradores?q= (opcional) listado
+    POST /api/admin/administradores
+    PUT /api/admin/administradores/{id}
+    PATCH /api/admin/administradores/{id}/desactivar (activo=false)
+Centros de salud
+    GET /api/admin/centros-salud?nombre=&localidad= 
+    POST /api/admin/centros-salud
+    PUT /api/admin/centros-salud/{id}
+    PATCH /api/admin/centros-salud/{id}/desactivar
+Médicos
+    GET /api/admin/medicos?nombre=&localidad=&centroId=
+    POST /api/admin/medicos (password inicial = numColegiado)
+    PUT /api/admin/medicos/{id} 
+    PATCH /api/admin/medicos/{id}/desactivar
+Pacientes
+    GET /api/admin/pacientes?nombre=&localidad=&centroId=&medicoId=
+    POST /api/admin/pacientes 
+    PUT /api/admin/pacientes/{id}
+    PATCH /api/admin/pacientes/{id}/desactivar
+Farmacias
+    GET /api/admin/farmacias?nombreEstablecimiento=&localidad=
+    POST /api/admin/farmacias 
+    PUT /api/admin/farmacias/{id}
+    PATCH /api/admin/farmacias/{id}/desactivar
+Citas 
+    GET /api/admin/citas?fecha=YYYY-MM-DD&medicoId=&pacienteId= 
+    PATCH /api/admin/citas/{id}/anular (estado=ANULADA)
+    Medicamentos
+    GET /api/admin/medicamentos?nombre=&principioActivo=&fabricante=&familia= 
+    POST /api/admin/medicamentos
+    PUT /api/admin/medicamentos/{id}
+    PATCH /api/admin/medicamentos/{id}/desactivar (activo=false)
+Agenda del día
+    GET /api/medico/agenda?fecha=YYYY-MM-DD 
+    PATCH /api/medico/citas/{id}/ausente 
+    PATCH /api/medico/citas/{id}/completar 
+Atención de cita
+    GET /api/medico/citas/{id}/atencion 
+    PATCH /api/medico/prescripciones/{id}/anular 
+    Crear prescripción + plan de recetas
+    POST /api/medico/pacientes/{pacienteId}/prescripciones
+Perfil
+    PUT /api/medico/perfil 
+    PUT /api/medico/perfil/password 
+    Mis citas
+    GET /api/paciente/citas 
+    PATCH /api/paciente/citas/{id}/anular
+Nueva cita
+    GET /api/paciente/citas/huecos?fecha=YYYY-MM-DD 
+    POST /api/paciente/citas 
+    Mis recetas
+    GET /api/paciente/recetas 
+Perfil
+    PUT /api/paciente/perfil
+    PUT /api/paciente/perfil/password
+Gestión receta
+    GET /api/farmacia/recetas?tarjetaSanitaria=TS123 
+    POST /api/farmacia/recetas/{id}/servir
+ Perfil
+    PUT /api/farmacia/perfil
+    PUT /api/farmacia/perfil/password
