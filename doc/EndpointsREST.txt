@@ -1,68 +1,64 @@
 
-Login
-    POST /api/auth/login 
-    POST /api/auth/logout
-    GET /api/auth/me 
 Administrador
     quitar /admins
-    GET /api/admin/administradores?q= (opcional) listado
-    POST /api/admin/administradores
-    PUT /api/admin/administradores/{id}
-    PATCH /api/admin/administradores/{id}/desactivar (activo=false)
+    GET /api/administradores?q= (opcional) listado
+    POST /api/administradores
+    PUT /api/administradores/{id}
+    DELETE /api/administradores/{id} (activo=false)
 Centros de salud
-    GET /api/admin/centros-salud?nombre=&localidad= 
-    POST /api/admin/centros-salud
-    PUT /api/admin/centros-salud/{id}
-    PATCH /api/admin/centros-salud/{id}/desactivar (en patch no poner verbs, mejor delete)
+    GET /api/centros-salud?nombre=&localidad= 
+    POST /api/centros-salud
+    PUT /api/centros-salud/{id}
+    DELETE /api/centros-salud/{id} (en patch no poner verbs, mejor delete)
 Médicos
-    GET /api/admin/medicos?nombre=&localidad=&centroId=
-    POST /api/admin/medicos (password inicial = numColegiado)
-    PUT /api/admin/medicos/{id} 
-    PATCH /api/admin/medicos/{id}/desactivar
+    GET /api/medicos?nombre=&localidad=&centroId=
+    POST /api/medicos (password inicial = numColegiado)
+    PUT /api/medicos/{id} 
+    DELETE /api/medicos/{id}
 Pacientes
-    GET /api/admin/pacientes?nombre=&localidad=&centroId=&medicoId=
-    POST /api/admin/pacientes 
-    PUT /api/admin/pacientes/{id}
-    PATCH /api/admin/pacientes/{id}/desactivar
+    GET /api/pacientes?nombre=&localidad=&centroId=&medicoId=
+    POST /api/pacientes 
+    PUT /api/pacientes/{id}
+    DELETE /api/pacientes/{id}
 Farmacias
-    GET /api/admin/farmacias?nombreEstablecimiento=&localidad=
-    POST /api/admin/farmacias 
-    PUT /api/admin/farmacias/{id}
-    PATCH /api/admin/farmacias/{id}/desactivar
+    GET /api/farmacias?nombreEstablecimiento=&localidad=
+    POST /api/farmacias 
+    PUT /api/farmacias/{id}
+    DELETE /api/farmacias/{id}
 Citas 
-    recordar poner citas libres
-    GET /api/admin/citas?fecha=YYYY-MM-DD&medicoId=&pacienteId= 
-    PATCH /api/admin/citas/{id}/anular (estado=ANULADA)
+    citas libres  GET /api/citas?fecha=YYYY-MM-DD&medicoId=
+    GET /api/citas?fecha=YYYY-MM-DD&medicoId=&pacienteId= 
+    PATCH /api/citas/{id} (estado=ANULADA)
 Medicamentos
-    GET /api/admin/medicamentos?nombre=&principioActivo=&fabricante=&familia= 
-    POST /api/admin/medicamentos
-    PUT /api/admin/medicamentos/{id}
-    PATCH /api/admin/medicamentos/{id}/desactivar (activo=false)
+    GET /api/medicamentos?nombre=&principioActivo=&fabricante=&familia= 
+    POST /api/medicamentos
+    PUT /api/medicamentos/{id}
+    DELETE /api/medicamentos/{id}
 Agenda del día
     GET /api/medico/agenda?fecha=YYYY-MM-DD 
-    PATCH /api/medico/citas/{id}/ausente 
-    PATCH /api/medico/citas/{id}/completar 
+    PATCH /api/citas/{medicoId}
 Atención de cita, api/citas pudee tenr recurso medico
-    GET /api/medico/citas/{id}/atencion 
-    PATCH /api/medico/prescripciones/{id}/anular 
+    GET /api/citas/atencion?medicoId= 
+    PATCH /api/prescripciones/{medicoId}
     Crear prescripción + plan de recetas
-    POST /api/medico/pacientes/{pacienteId}/prescripciones
+     POST /api/prescripciones
 Ls prescrip en api/prescrip
 Perfil
     PUT /api/medico/perfil 
     PUT /api/medico/perfil/password 
 Mis citas
-    GET /api/paciente/{id}/citas , implemetar en el controlador de las citas
-    PATCH /api/paciente/citas/{id}/anular, modificar cita no hace falta enpint concreto ej  PATCH /api/paciente/citas/{id}
+    GET /api/citas?pacienteId= , implemetar en el controlador de las citas
+    PATCH /api/citas/{id}
 Nueva cita, gestionar nuevas citas a partir de citas directamente no paciente
-    GET /api/paciente/citas/huecos?fecha=YYYY-MM-DD 
-    POST /api/paciente/{id}/citas 
-    Mis recetas
-    GET /api/paciente/recetas 
+    GET /api/citas/huecos?fecha=YYYY-MM-DD 
+    POST /api/citas/{pacienteId} 
+    GET /api/citas?pacienteId= 
+Mis recetas
+    GET /api/recetas/{pacienteId} 
+    
 Perfil
-    PUT /api/paciente/perfil
-    PUT /api/paciente/perfil/password
+    PUT /api/paciente/{id}
 Gestión receta, rectas igual que nueva cita, recurso de 1º nivel
-    GET /api/farmacia/recetas?tarjetaSanitaria=TS123 
-    POST /api/farmacia/recetas/{id}/servir, patch or put dpendiendo del contexto
+    GET /api/recetas?tarjetaSanitaria=TS123 
+    PATCH /api/recetas/{id} patch or put dpendiendo del contexto
 
