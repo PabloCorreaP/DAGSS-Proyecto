@@ -1,4 +1,92 @@
 
+
+Administradores (HU-A2)
+
+GET /api/administradores?q=
+
+POST /api/administradores
+
+PUT /api/administradores/{id}
+
+DELETE /api/administradores/{id} (activo=false)
+
+Centros (HU-A3)
+
+GET /api/centros-salud?nombre=&localidad=
+
+POST /api/centros-salud
+
+PUT /api/centros-salud/{id}
+
+DELETE /api/centros-salud/{id}
+
+Médicos (HU-A4 + HU-M6)
+
+GET /api/medicos?nombre=&localidad=&centroId=
+
+POST /api/medicos (password inicial = numeroColegiado)
+
+PUT /api/medicos/{id}
+
+DELETE /api/medicos/{id}
+
+Pacientes (HU-A5 + HU-P5)
+
+GET /api/pacientes?nombre=&localidad=&centroId=&medicoId=
+
+POST /api/pacientes (password inicial = dni)
+
+PUT /api/pacientes/{id}
+
+DELETE /api/pacientes/{id}
+
+Farmacias (HU-A6 + HU-F4)
+
+GET /api/farmacias?nombreEstablecimiento=&localidad=
+
+POST /api/farmacias (password inicial = numColegiadoFarmaceutico)
+
+PUT /api/farmacias/{id}
+
+DELETE /api/farmacias/{id}
+
+Medicamentos (HU-A8 + HU-M4)
+
+GET /api/medicamentos?nombre=&principioActivo=&fabricante=&familia=
+
+POST /api/medicamentos
+
+PUT /api/medicamentos/{id}
+
+DELETE /api/medicamentos/{id}
+
+Citas (HU-A7 + HU-M2 + HU-P2 + HU-P3)
+
+GET /api/citas?fecha=&medicoId=&pacienteId= (listado/filtrado)
+
+GET /api/citas/huecos?fecha=YYYY-MM-DD&medicoId= (HU-P3)
+
+POST /api/citas (crear)
+
+PATCH /api/citas/{id} (anular/completar/ausente)
+
+Atención de cita / Prescripciones (HU-M3..M5)
+
+GET /api/citas/{id}/atencion (paciente + prescripciones en vigor)
+
+POST /api/prescripciones (crea prescripción + genera plan recetas)
+
+PATCH /api/prescripciones/{id} (anular: activa=false + recetas ANULADA)
+
+Recetas (HU-P4 + HU-F2 + HU-F3)
+
+GET /api/recetas?pacienteId= (mis recetas pendientes)
+
+GET /api/recetas?tarjetaSanitaria= (farmacia consulta)
+
+PATCH /api/recetas/{id} (servir)
+---------------
+viejos
 Administrador
     quitar /admins
     GET /api/administradores?q= (opcional) listado

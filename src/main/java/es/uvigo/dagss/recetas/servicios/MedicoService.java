@@ -5,7 +5,6 @@ import es.uvigo.dagss.recetas.entidades.Medico;
 import es.uvigo.dagss.recetas.repositorios.CentroSaludDAO;
 import es.uvigo.dagss.recetas.repositorios.MedicoDAO;
 import es.uvigo.dagss.recetas.repositorios.UsuarioDAO;
-import es.uvigo.dagss.recetas.servicios.excepciones.OperacionNoPermitidaException;
 import es.uvigo.dagss.recetas.servicios.excepciones.RecursoNoEncontradoException;
 import es.uvigo.dagss.recetas.servicios.excepciones.ValidacionException;
 import java.util.List;
@@ -60,6 +59,7 @@ public class MedicoService {
 
         if (login == null || login.isBlank()) throw new ValidacionException("login obligatorio");
         if (numeroColegiado == null || numeroColegiado.isBlank()) throw new ValidacionException("nº colegiado obligatorio");
+        if (centroSaludId == null) throw new ValidacionException("centroSaludId obligatorio");
         if (usuarioRepository.existsByLogin(login.trim())) throw new ValidacionException("Ya existe un usuario con ese login");
 
         CentroSalud cs = centroSaludRepository.findById(centroSaludId)
@@ -112,6 +112,39 @@ public class MedicoService {
         return medicoRepository.save(m);
     }
 
+    /** WRAPPER: alta pasando Medico + centroId (para el controller REST) */
+    @Transactional
+    public Medico crear(Medico m, Long centroSaludId) {
+        if (m == null) throw new ValidacionException("Body obligatorio");
+        return crear(
+                m.getLogin(),
+                m.getNombre(),
+                m.getApellidos(),
+                m.getDni(),
+                m.getNumeroColegiado(),
+                m.getTelefono(),
+                m.getEmail(),
+                centroSaludId
+        );
+    }
+
+    /** WRAPPER: edición admin pasando Medico + centroId */
+    @Transactional
+    public Medico actualizarPorAdmin(Long id, Medico cambios, Long centroSaludId) {
+        if (cambios == null) throw new ValidacionException("Body obligatorio");
+        return actualizarPorAdmin(
+                id,
+                cambios.getNombre(),
+                cambios.getApellidos(),
+                cambios.getDni(),
+                cambios.getNumeroColegiado(),
+                cambios.getTelefono(),
+                cambios.getEmail(),
+                centroSaludId,
+                cambios.getActivo()
+        );
+    }
+
     /** HU-A4: baja lógica */
     @Transactional
     public void baja(Long id) {
@@ -145,5 +178,26 @@ public class MedicoService {
         return medicoRepository.save(m);
     }
 
-  
+    /** WRAPPER: perfil pasando Medico */
+    @Transactional
+    public Medico actualizarPerfil(Long medicoId, Medico cambios) {
+        if (cambios == null) throw new ValidacionException("Body obligatorio");
+        return actualizarPerfil(
+                medicoId,
+                cambios.getPassword(),
+                cambios.getNombre(),
+                cambios.getApellidos(),
+                cambios.getTelefono(),
+                cambios.getEmail()
+        );
+    }
+
+    /** WRAPPER: cambiar solo password */
+    @Transactional
+    public void cambiarPassword(Long medicoId, String nuevaPassword) {
+        if (nuevaPassword == null || nuevaPassword.isBlank()) {
+            throw new ValidacionException("password obligatoria");
+        }
+        actualizarPerfil(medicoId, nuevaPassword, null, null, null, null);
+    }
 }

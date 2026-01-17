@@ -169,4 +169,12 @@ public class CitaService {
 
         return citaDAO.save(c);
     }
+
+
+    @Transactional(readOnly = true)
+    public Cita getOrThrow(Long id) {
+        return citaDAO.findById(id)
+                .orElseThrow(() -> new RecursoNoEncontradoException("Cita no encontrada: " + id));
+    }
+
 }

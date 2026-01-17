@@ -34,8 +34,8 @@ public class FarmaciaService {
         return farmaciaDAO.buscarActivasPorNombreEstablecimientoOLocalidadLike(t);
     }
 
-    /** HU-A6: alta. 
-     * Contraseña inicail num colegiado */
+    /** HU-A6: alta.
+     *  Contraseña inicial = num colegiado */
     @Transactional
     public Farmacia crear(String login,
                           String nombreEstablecimiento,
@@ -58,7 +58,7 @@ public class FarmaciaService {
 
         Farmacia f = new Farmacia();
         f.setLogin(login.trim());
-        f.setPassword(numeroColegiadoFarmaceutico); 
+        f.setPassword(numeroColegiadoFarmaceutico);
         f.setNombreEstablecimiento(nombreEstablecimiento);
         f.setNombreFarmaceutico(nombreFarmaceutico);
         f.setApellidosFarmaceutico(apellidosFarmaceutico);
@@ -78,18 +78,18 @@ public class FarmaciaService {
     /** HU-A6: edición por administrador */
     @Transactional
     public Farmacia actualizarPorAdmin(Long id,
-                                      String nombreEstablecimiento,
-                                      String nombreFarmaceutico,
-                                      String apellidosFarmaceutico,
-                                      String nif,
-                                      String numeroColegiadoFarmaceutico,
-                                      String domicilio,
-                                      String localidad,
-                                      String codigoPostal,
-                                      String provincia,
-                                      String telefono,
-                                      String email,
-                                      Boolean activo) {
+                                       String nombreEstablecimiento,
+                                       String nombreFarmaceutico,
+                                       String apellidosFarmaceutico,
+                                       String nif,
+                                       String numeroColegiadoFarmaceutico,
+                                       String domicilio,
+                                       String localidad,
+                                       String codigoPostal,
+                                       String provincia,
+                                       String telefono,
+                                       String email,
+                                       Boolean activo) {
 
         Farmacia f = farmaciaDAO.findById(id)
                 .orElseThrow(() -> new RecursoNoEncontradoException("Farmacia no encontrada: " + id));
@@ -110,7 +110,32 @@ public class FarmaciaService {
         return farmaciaDAO.save(f);
     }
 
-    /** HU-A6: baja  */
+    /**
+     * WRAPPER para que el Controller pueda mandar un Farmacia completo
+     * sin cambiar tu firma "larga".
+     */
+    @Transactional
+    public Farmacia actualizarPorAdmin(Long id, Farmacia cambios) {
+        if (cambios == null) throw new ValidacionException("Body obligatorio");
+
+        return actualizarPorAdmin(
+                id,
+                cambios.getNombreEstablecimiento(),
+                cambios.getNombreFarmaceutico(),
+                cambios.getApellidosFarmaceutico(),
+                cambios.getNif(),
+                cambios.getNumeroColegiadoFarmaceutico(),
+                cambios.getDomicilio(),
+                cambios.getLocalidad(),
+                cambios.getCodigoPostal(),
+                cambios.getProvincia(),
+                cambios.getTelefono(),
+                cambios.getEmail(),
+                cambios.getActivo()
+        );
+    }
+
+    /** HU-A6: baja */
     @Transactional
     public void baja(Long id) {
         Farmacia f = farmaciaDAO.findById(id)
@@ -119,17 +144,17 @@ public class FarmaciaService {
         farmaciaDAO.save(f);
     }
 
-    /** HU-F4: actualizar perfil  */
+    /** HU-F4: actualizar perfil */
     @Transactional
     public Farmacia actualizarPerfil(Long farmaciaId,
-                                    String nuevaPassword,
-                                    String nombreEstablecimiento,
-                                    String domicilio,
-                                    String localidad,
-                                    String codigoPostal,
-                                    String provincia,
-                                    String telefono,
-                                    String email) {
+                                     String nuevaPassword,
+                                     String nombreEstablecimiento,
+                                     String domicilio,
+                                     String localidad,
+                                     String codigoPostal,
+                                     String provincia,
+                                     String telefono,
+                                     String email) {
 
         Farmacia f = farmaciaDAO.findById(farmaciaId)
                 .orElseThrow(() -> new RecursoNoEncontradoException("Farmacia no encontrada: " + farmaciaId));
@@ -148,5 +173,33 @@ public class FarmaciaService {
         return farmaciaDAO.save(f);
     }
 
- 
+    /**
+     * WRAPPER: perfil pasando Farmacia en el body.
+     * (Si viene password dentro, se usa como nuevaPassword)
+     */
+    @Transactional
+    public Farmacia actualizarPerfil(Long farmaciaId, Farmacia cambios) {
+        if (cambios == null) throw new ValidacionException("Body obligatorio");
+
+        return actualizarPerfil(
+                farmaciaId,
+                cambios.getPassword(),
+                cambios.getNombreEstablecimiento(),
+                cambios.getDomicilio(),
+                cambios.getLocalidad(),
+                cambios.getCodigoPostal(),
+                cambios.getProvincia(),
+                cambios.getTelefono(),
+                cambios.getEmail()
+        );
+    }
+
+    /** WRAPPER: cambiar solo password */
+    @Transactional
+    public void cambiarPassword(Long farmaciaId, String nuevaPassword) {
+        if (nuevaPassword == null || nuevaPassword.isBlank()) {
+            throw new ValidacionException("password obligatoria");
+        }
+        actualizarPerfil(farmaciaId, nuevaPassword, null, null, null, null, null, null, null);
+    }
 }

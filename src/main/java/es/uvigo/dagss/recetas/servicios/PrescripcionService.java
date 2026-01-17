@@ -94,7 +94,9 @@ public class PrescripcionService {
         Prescripcion p = prescripcionDAO.findById(prescripcionId)
                 .orElseThrow(() -> new RecursoNoEncontradoException("Prescripción no encontrada: " + prescripcionId));
 
-        if (!p.getMedico().getId().equals(medicoId)) {
+        // Si se proporciona medicoId, validamos que la prescripción sea de ese médico.
+        // Si no se proporciona, asumimos operación administrativa (o sin contexto de auth).
+        if (medicoId != null && !p.getMedico().getId().equals(medicoId)) {
             throw new OperacionNoPermitidaException("La prescripción no pertenece al médico");
         }
 

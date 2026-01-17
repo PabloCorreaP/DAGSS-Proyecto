@@ -46,9 +46,7 @@ public class PacienteService {
         return pacienteDAO.buscarActivos(n, l, centroId, medicoId);
     }
 
-    /** HU-A5: alta
-     * contra ini dni
-     */
+    /** HU-A5: alta. Password inicial = DNI */
     @Transactional
     public Paciente crear(String login,
                           String nombre,
@@ -68,6 +66,8 @@ public class PacienteService {
 
         if (login == null || login.isBlank()) throw new ValidacionException("login obligatorio");
         if (dni == null || dni.isBlank()) throw new ValidacionException("dni obligatorio");
+        if (centroSaludId == null) throw new ValidacionException("centroSaludId obligatorio");
+        if (medicoId == null) throw new ValidacionException("medicoId obligatorio");
         if (usuarioDAO.existsByLogin(login.trim())) throw new ValidacionException("Ya existe un usuario con ese login");
 
         CentroSalud cs = centroDAO.findById(centroSaludId)
@@ -82,7 +82,7 @@ public class PacienteService {
 
         Paciente p = new Paciente();
         p.setLogin(login.trim());
-        p.setPassword(dni); 
+        p.setPassword(dni); // password inicial
         p.setNombre(nombre);
         p.setApellidos(apellidos);
         p.setDni(dni);
@@ -102,24 +102,24 @@ public class PacienteService {
         return pacienteDAO.save(p);
     }
 
-    /** HU-A5: edición por administrador  */
+    /** HU-A5: edición por administrador */
     @Transactional
     public Paciente actualizarPorAdmin(Long id,
-                                      String nombre,
-                                      String apellidos,
-                                      String dni,
-                                      String numeroTarjetaSanitaria,
-                                      String numeroSeguridadSocial,
-                                      String domicilio,
-                                      String localidad,
-                                      String codigoPostal,
-                                      String provincia,
-                                      String telefono,
-                                      String email,
-                                      java.util.Date fechaNacimiento,
-                                      Long centroSaludId,
-                                      Long medicoId,
-                                      Boolean activo) {
+                                       String nombre,
+                                       String apellidos,
+                                       String dni,
+                                       String numeroTarjetaSanitaria,
+                                       String numeroSeguridadSocial,
+                                       String domicilio,
+                                       String localidad,
+                                       String codigoPostal,
+                                       String provincia,
+                                       String telefono,
+                                       String email,
+                                       java.util.Date fechaNacimiento,
+                                       Long centroSaludId,
+                                       Long medicoId,
+                                       Boolean activo) {
 
         Paciente p = pacienteDAO.findById(id)
                 .orElseThrow(() -> new RecursoNoEncontradoException("Paciente no encontrado: " + id));
@@ -136,7 +136,7 @@ public class PacienteService {
                     .orElseThrow(() -> new RecursoNoEncontradoException("Médico no encontrado: " + medicoId));
 
             if (m.getCentroSalud() == null || cs == null || cs.getId() == null ||
-                !cs.getId().equals(m.getCentroSalud().getId())) {
+                    !cs.getId().equals(m.getCentroSalud().getId())) {
                 throw new OperacionNoPermitidaException("El médico asignado debe pertenecer al centro de salud del paciente");
             }
             p.setMedicoAsignado(m);
@@ -159,7 +159,54 @@ public class PacienteService {
         return pacienteDAO.save(p);
     }
 
-    /** HU-A5: baja  */
+    /** WRAPPER: alta pasando Paciente + ids (para controller REST) */
+    @Transactional
+    public Paciente crear(Paciente p, Long centroSaludId, Long medicoId) {
+        if (p == null) throw new ValidacionException("Body obligatorio");
+        return crear(
+                p.getLogin(),
+                p.getNombre(),
+                p.getApellidos(),
+                p.getDni(),
+                p.getNumeroTarjetaSanitaria(),
+                p.getNumeroSeguridadSocial(),
+                p.getDomicilio(),
+                p.getLocalidad(),
+                p.getCodigoPostal(),
+                p.getProvincia(),
+                p.getTelefono(),
+                p.getEmail(),
+                p.getFechaNacimiento(),
+                centroSaludId,
+                medicoId
+        );
+    }
+
+    /** WRAPPER: edición admin pasando Paciente + ids */
+    @Transactional
+    public Paciente actualizarPorAdmin(Long id, Paciente cambios, Long centroSaludId, Long medicoId) {
+        if (cambios == null) throw new ValidacionException("Body obligatorio");
+        return actualizarPorAdmin(
+                id,
+                cambios.getNombre(),
+                cambios.getApellidos(),
+                cambios.getDni(),
+                cambios.getNumeroTarjetaSanitaria(),
+                cambios.getNumeroSeguridadSocial(),
+                cambios.getDomicilio(),
+                cambios.getLocalidad(),
+                cambios.getCodigoPostal(),
+                cambios.getProvincia(),
+                cambios.getTelefono(),
+                cambios.getEmail(),
+                cambios.getFechaNacimiento(),
+                centroSaludId,
+                medicoId,
+                cambios.getActivo()
+        );
+    }
+
+    /** HU-A5: baja */
     @Transactional
     public void baja(Long id) {
         Paciente p = pacienteDAO.findById(id)
@@ -168,18 +215,18 @@ public class PacienteService {
         pacienteDAO.save(p);
     }
 
-    /** HU-P5: perfil  */
+    /** HU-P5: perfil */
     @Transactional
     public Paciente actualizarPerfil(Long pacienteId,
-                                    String nuevaPassword,
-                                    String nombre,
-                                    String apellidos,
-                                    String domicilio,
-                                    String localidad,
-                                    String codigoPostal,
-                                    String provincia,
-                                    String telefono,
-                                    String email) {
+                                     String nuevaPassword,
+                                     String nombre,
+                                     String apellidos,
+                                     String domicilio,
+                                     String localidad,
+                                     String codigoPostal,
+                                     String provincia,
+                                     String telefono,
+                                     String email) {
 
         Paciente p = pacienteDAO.findById(pacienteId)
                 .orElseThrow(() -> new RecursoNoEncontradoException("Paciente no encontrado: " + pacienteId));
@@ -198,6 +245,33 @@ public class PacienteService {
         if (email != null) p.setEmail(email);
 
         return pacienteDAO.save(p);
+    }
+
+    /** WRAPPER: perfil pasando Paciente */
+    @Transactional
+    public Paciente actualizarPerfil(Long pacienteId, Paciente cambios) {
+        if (cambios == null) throw new ValidacionException("Body obligatorio");
+        return actualizarPerfil(
+                pacienteId,
+                cambios.getPassword(),
+                cambios.getNombre(),
+                cambios.getApellidos(),
+                cambios.getDomicilio(),
+                cambios.getLocalidad(),
+                cambios.getCodigoPostal(),
+                cambios.getProvincia(),
+                cambios.getTelefono(),
+                cambios.getEmail()
+        );
+    }
+
+    /** WRAPPER: cambiar solo password */
+    @Transactional
+    public void cambiarPassword(Long pacienteId, String nuevaPassword) {
+        if (nuevaPassword == null || nuevaPassword.isBlank()) {
+            throw new ValidacionException("password obligatoria");
+        }
+        actualizarPerfil(pacienteId, nuevaPassword, null, null, null, null, null, null, null,null);
     }
 
     @Transactional(readOnly = true)

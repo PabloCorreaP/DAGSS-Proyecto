@@ -61,5 +61,23 @@ public class MedicamentoService {
         medicamentoDAO.save(m);
     }
 
+    @Transactional(readOnly = true)
+public List<Medicamento> buscar(String nombre, String principioActivo, String fabricante, String familia) {
+    String n = (nombre == null || nombre.isBlank()) ? null : nombre.trim().toLowerCase();
+    String p = (principioActivo == null || principioActivo.isBlank()) ? null : principioActivo.trim().toLowerCase();
+    String f = (fabricante == null || fabricante.isBlank()) ? null : fabricante.trim().toLowerCase();
+    String fam = (familia == null || familia.isBlank()) ? null : familia.trim().toLowerCase();
+
+    // Si no hay filtros, devuelvo activos
+    List<Medicamento> base = listarActivos();
+
+    return base.stream()
+        .filter(m -> n == null || (m.getNombreComercial() != null && m.getNombreComercial().toLowerCase().contains(n)))
+        .filter(m -> p == null || (m.getPrincipioActivo() != null && m.getPrincipioActivo().toLowerCase().contains(p)))
+        .filter(m -> f == null || (m.getFabricante() != null && m.getFabricante().toLowerCase().contains(f)))
+        .filter(m -> fam == null || (m.getFamilia() != null && m.getFamilia().toLowerCase().contains(fam)))
+        .toList();
+}
+
  
 }
