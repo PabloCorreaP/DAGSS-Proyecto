@@ -8,6 +8,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
+import es.uvigo.dagss.recetas.controladores.dto.PrescripcionPatchRequest;
 
 @RestController
 @RequestMapping(path = "/api/centros-salud", produces = MediaType.APPLICATION_JSON_VALUE)
